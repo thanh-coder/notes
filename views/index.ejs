@@ -1,9 +1,10 @@
 <% include top %>
+<h1>aannana</h1>
 <%
     if(notes) {
-        for(var i in notes.notes) {
-            %><p><%= i %>: 
-                <a href="/noteview?key=<%= i %>"><%= notes.notes[i].title %></a>
+        for(var note of notes) {
+            %><p><%= note.key %>: 
+                <a href="/noteview?key=<%= note.key %>"><%= note.title %></a>
             </p><%
         }
     }
