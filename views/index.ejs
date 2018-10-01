@@ -1,0 +1,11 @@
+<% include top %>
+<%
+    if(notes) {
+        for(var i in notes.notes) {
+            %><p><%= i %>: 
+                <a href="/noteview?key=<%= i %>"><%= notes.notes[i].title %></a>
+            </p><%
+        }
+    }
+%>
+<% include bottom %>
