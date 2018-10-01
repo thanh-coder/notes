@@ -9,8 +9,32 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var notes = require('./routes/notes');
 var models = require('./models/notes');
+
+var models = require('./models-mongoose/notes');
+// var models = require('./models/notes');
+models.connect("mongodb://localhost/notes", function(err) {
+    if(err)
+    throw err;
+});
 notes.configure(models);
 routes.configure(models);
+// var models = require('./models-sequelize/notes');
+// models.connect({
+//     dbname: "notes",
+//     username: "root",
+//     password: "123456",
+//     params: {
+//         host: "127.0.0.1",
+//         dialect: "mysql"
+//     }
+// },
+// function(err) {
+//     if(err)
+//         throw err;
+// });
+notes.configure(models);
+routes.configure(models);
+
 var app = express();
  
 // view engine setup
