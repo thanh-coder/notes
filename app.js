@@ -1,3 +1,4 @@
+var http = require('http');
 var express       = require('express');
 var path          = require('path');
 //var favicon       = require('serve-favicon');
@@ -47,7 +48,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("public"));
+
  
 app.use('/', routes.index);
 app.use('/users', users);
@@ -90,3 +93,40 @@ app.use(function(err, req, res, next) {
 });
  
 module.exports = app;
+
+var server = http.Server(app);
+var io = require('socket.io').listen(server);
+app.set('port', 3000);
+ 
+server.listen(app.get('port'), function() {
+    console.log("Express server listening on port " + app.get('port'));
+});
+ 
+io.sockets.on('connection', function(socket) {
+    socket.on('notetitles', function(fn) {        
+        models.titles(function(err, titles) {
+            if(err) {
+                util.log(err); 
+            } else {
+                fn(titles);
+            }
+        });
+     });
+  
+    var broadcastUpdated = function(newnote) {
+        socket.emit('noteupdated', newnote);
+    }
+    models.emitter.on('noteupdated', broadcastUpdated);
+    socket.on('disconnect', function() {
+       models.emitter.removeListener('noteupdated', broadcastUpdated);
+    });
+ 
+    var broadcastDeleted = function(notekey) {
+       socket.emit('notedeleted', notekey);
+    }
+    models.emitter.on('notedeleted', broadcastDeleted);
+    socket.on('disconnect', function() {
+        models.emitter.removeListener('notedeleted', broadcastDeleted);
+    });
+ 
+});

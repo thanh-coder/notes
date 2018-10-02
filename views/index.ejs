@@ -1,5 +1,6 @@
 <% include top %>
-<h1>aannana</h1>
+<div id='notetitles'>
+
 <%
     if(notes) {
         for(var note of notes) {
@@ -9,4 +10,22 @@
         }
     }
 %>
+</div>
+ 
+<script>
+    $(document).ready(function() { 
+        var getnotetitles = function() { 
+            socket.emit('notetitles', function(notes) { 
+                $('#notetitles').empty();
+                for(var i in notes) {
+                    var str = '<p>' + notes[i].key + ': <a href="noteview?key=' + notes[i].key + '">' + notes[i].title + '</a>' + '</p>';
+                    $('#notetitles').append(str);
+                }
+            });
+        }
+  
+        socket.on('noteupdated', getnotetitles);
+        socket.on('notedeleted', getnotetitles);
+    });
+</script>
 <% include bottom %>

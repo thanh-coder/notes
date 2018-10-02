@@ -9,4 +9,26 @@
         <a href="noteedit?key=<%= notekey %>">Edit</a>
     </p>
 <% } %>
+
+ 
+<script>
+    $(document).ready(function() {
+        var updatenote = function(newnote) {
+            $('#notetitle').empty();
+            $('#notetitle').append(newnote.title);
+            $('#notebody').empty();
+            $('#notebody').append(newnote.body);
+        }
+        socket.on('noteupdated', function(newnote) {
+            if(newnote.key === "<%= notekey %>") {
+                updatenote(newnote);
+            }
+        });
+        socket.on('notedeleted', function(notekey) {
+            if(notekey === "<%= notekey %>") {
+                document.location.href = "/";
+            }
+        });
+   });
+</script>
 <% include bottom %>

@@ -1,3 +1,6 @@
+var events = require('events');
+var emitter = module.exports.emitter = new events.EventEmitter();
+ 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var dburl = undefined;
@@ -27,8 +30,14 @@ exports.create = function(key, title, body, callback) {
     newNote.save(function(err) {
         if(err)
             callback(err);
-        else
+    else{
+             exports.emitter.emit('noteupdated', {
+        key: key,
+        title: title,
+        body: body
+    });
             callback();
+        }
     });
 }
  
@@ -43,8 +52,16 @@ exports.update = function(key, title, body, callback) {
             doc.save(function(err) {
                 if(err)
                     callback(err);
-                else
+                else{
+
+                       exports.emitter.emit('noteupdated', {
+                        key: key,
+                        title: title,
+                        body: body
+    });
+                
                     callback();
+                }
             });
         }
     });
@@ -64,6 +81,7 @@ exports.destroy = function(key, callback) {
         if(err)
             callback(err);
         else {
+             emitter.emit('notedeleted', key);
             doc.remove();
             callback();
         }
